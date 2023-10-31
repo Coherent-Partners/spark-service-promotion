@@ -1,0 +1,31 @@
+name: impex
+run-name: CI/CD Demo
+
+on:
+  workflow_dispatch:
+
+env:
+  TENANT: $CS_TENANT_NAME
+  REGION: $CS_URL_REGION
+  BEARER_TOKEN: some-token
+  SERVICES: $CS_SERVICE_URI_SOURCE
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Execute Export API Request
+        run: |
+          node -e 'require("./script.js").exp("$REGION","$TENANT","$BEARER_TOKEN","$SERVICES")'
