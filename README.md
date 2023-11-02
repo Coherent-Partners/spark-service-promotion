@@ -165,7 +165,7 @@ If you'd like to contribute to this project, please follow the
 This project is licensed under the [MIT](LICENSE).
 
 <!-- References -->
-[ci-img]: https://github.com/CoherentCapital/gha-ci-cd/workflows/build/badge.svg
-[ci-url]: https://github.com/oherentCapital/gha-ci-cd/actions/workflows/actions-demo.yml
+[ci-img]: https://github.com/CoherentCapital/gha-ci-cd/workflows/impex/badge.svg
+[ci-url]: https://github.com/coherentCapital/gha-ci-cd/actions/workflows/main.yml
 [gha-envars]: https://docs.github.com/en/actions/learn-github-actions/variables
 [impex-apis]: https://docs.coherent.global/api-details/impex-apis
