@@ -2,94 +2,170 @@
 
 [![CI/CD build status][ci-img]][ci-url]
 
-This repository contains the Continuous Integration and Continuous Deployment (CI/CD) pipeline for the PROJECT_NAME project using GitHub Actions.
+This repository contains a CI/CD script implemented using GitHub Actions to export
+and import Spark services from a lower to higher environment.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Workflow Description](#workflow-description)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setting up Secrets](#setting-up-secrets)
-- [Workflow Configuration](#workflow-configuration)
+- [Prerequisites](#prerequisites)
+- [Workflow](#workflow)
+  - [Test Workflow](#test-workflow)
+  - [ImpEx Workflow](#impex-workflow)
+    - [Export](#export)
+    - [Import](#import)
+  - [Configuration](#configuration)
+  - [Customization](#customization)
 - [Usage](#usage)
-- [Customizing the Workflow](#customizing-the-workflow)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
 
-Explain briefly what this project is about and why the CI/CD pipeline is important for it.
+Welcome to the CI/CD for Exporting and Importing Spark Services repository!
 
-## Workflow Description
+This project leverages GitHub Actions to automate the process of exporting and
+importing Spark services, facilitating seamless deployment from lower to higher
+environments.
 
-Provide an overview of the CI/CD pipeline workflow, including its stages, steps, and what each step accomplishes.
+With a meticulously designed workflow, a CI/CD script may help ensure efficiency
+and consistency in managing your Spark services. If you're looking to streamline
+enhance deployment workflows, this repository offers a basic foundation to accelerate
+this process.
 
-Example:
+Explore the comprehensive documentation below to get started on integrating this
+sample CI/CD solution into your own environment.
 
-- **Build**: This stage compiles and builds the project.
-- **Test**: This stage runs automated tests to ensure code quality.
-- **Deploy**: This stage deploys the application to the target environment.
+## Prerequisites
 
-## Getting Started
+Before you start using the ImpEx (Import/Export) workflow, ensure you have the
+following prerequisites in place:
 
-Explain how to set up and configure the CI/CD pipeline in a user's own repository.
+- **GitHub Repository**: You should have a GitHub repository set up for your
+  project where you'll be implementing the CI/CD workflow.
+- **Access to Environments**: You should have access credentials and permissions
+  for the lower environment (e.g., UAT) and higher environment (e.g., PROD) where
+  you intend to perform the import and export of Spark services.
+- **Environment Variables**: Set up the necessary environment variables in your
+  GitHub repository secrets for both the export and import jobs. These include
+  `CS_URL_REGION`, `CS_TENANT_NAME`, `CS_BEARER_TOKEN`, `CS_SERVICE_URI_SOURCE`,
+  and `CS_SERVICE_URI_TARGET`. These variables will be used for authentication and
+  service URI configuration. For more information on how to set up environment
+  variables, visit [GitHub Actions Environment Variables][gha-envars].
+- **Valid Spark Service Configurations**: Make sure that your Spark service
+  configurations are correctly set up in both environments (lower and higher).
+  This includes folders and services that you want to export and import.
+- **Authorization Tokens**: Obtain a valid authorization token (Bearer token) that
+  grants access to your Spark services for both export and import operations.
 
-### Prerequisites
+With these prerequisites in place, you'll be ready to implement and run the ImpEx
+workflow for seamless Spark service migration.
 
-List any prerequisites or dependencies that users need to have before setting up the pipeline.
+> **NOTE**:
+>
+> If you'd like to test the script locally, ensure that Node.js (version 16 or higher)
+> and npm (Node Package Manager) are installed on your development environment.
+> Run `npm install` to install the required dependencies and `npm test` to execute
+> import and export operations. Remember to set up the necessary environment variables
+> in your local environment as well.
 
-Example:
+## Workflow
 
-- Node.js (v12 or higher)
-- Docker (if applicable)
-- AWS account (if deploying to AWS)
+The ImpEx (Import/Export) workflow is a comprehensive CI/CD automation orchestrated
+through GitHub Actions. This workflow is designed to seamlessly migrate Spark
+services between 2 different environments, enhancing deployment efficiency and
+maintaining consistency across development stages.
 
-### Setting up Secrets
+The process starts with an export operation in the SIT environment, where the
+latest configurations and services are packaged into a portable artifact. This
+artifact is then securely stored for later use. Subsequently, in the UAT environment,
+the import workflow retrieves the exported entities, deploys them, and ensures
+the seamless transition of services from the lower environment to the higher one.
 
-If your pipeline requires any secret credentials or tokens, explain how users can set them up securely in their GitHub repository.
+### Test Workflow
 
-Example:
+If you're new to GitHub Actions, you can test the workflow by running the
+`Into to GitHub Actions` workflow. This workflow is designed to help you get
+familiar with GitHub Actions and its associated features.
 
-1. Go to your repository on GitHub.
-2. Navigate to `Settings` > `Secrets` > `New repository secret`.
-3. Add a new secret with the name `SECRET_NAME` and the corresponding value.
+Visit [GitHub Actions](https://docs.github.com/en/actions/quickstart) to learn
+more about GitHub Actions and how to get started.
 
-## Workflow Configuration
+### ImpEx Workflow
 
-Explain how the workflow configuration file(s) are organized in the repository. Provide an overview of the key files and their purposes.
+The `ImpEx` workflow is currently configured to work with the SIT and UAT environments.
+However, it's important to note that the workflow is designed to be environment-agnostic.
 
-Example:
+The workflow consists of 2 jobs: `export` and `import`.
 
-- `.github/workflows/main.yml`: Contains the main CI/CD workflow definition.
+#### Export
+
+- **Environment**: SIT
+- **Trigger**: Manually triggered using `workflow_dispatch`
+- **Steps**:
+  1. **Checkout Repository**: Pulls the latest code from the repository.
+  2. **Install Node**: Sets up Node.js environment with version 16 and caches npm dependencies.
+  3. **Install Node Dependencies**: Installs project dependencies using `npm ci`.
+  4. **Execute Export API Request**: Invokes a Node.js script to perform the export operation.
+  5. **Persist exported entities as artifact**: Uploads the exported entities as
+  an artifact named `exported`.
+
+#### Import
+
+- **Environment**: UAT
+- **Trigger**: Automatically triggered after the 'export' job is successful (`needs: export`).
+- **Steps**:
+  1. **Checkout Repository**: Pulls the latest code from the repository.
+  2. **Install Node**: Sets up Node.js environment with version 16 and caches npm dependencies.
+  3. **Install Node Dependencies**: Installs project dependencies using `npm ci`.
+  4. **Download exported entities from artifact**: Retrieves the exported entities artifact.
+  5. **Execute Import API Request**: Invokes a Node.js script to perform the import operation.
+  6. **Clean Up**: Deletes the artifact file after import is completed.
+
+### Configuration
+
+- Make sure to set up the necessary environment variables (e.g., `CS_URL_REGION`,
+`CS_TENANT_NAME`, `CS_BEARER_TOKEN`, `CS_SERVICE_URI_SOURCE`, `CS_SERVICE_URI_TARGET`)
+in your GitHub repository for both export and import jobs.
+
+### Customization
+
+Feel free to customize the workflow, environment settings, or any other parameters
+in the workflow file (`.github/workflows/main.yml`) to suit your specific requirements.
+
+Additionally, you can also customize the Node.js script (`src/index.js`) to add
+more functionality or modify the existing one. Keep in mind that the script relies
+entirely on the [ImpEx APIs][impex-apis] to perform the import and export operations.
+
+> [!IMPORTANT]
+> By combining the power of GitHub Actions and a meticulously designed NodeJS script,
+> the ImpEx workflow offers a practical solution for managing and deploying Spark
+> services with ease and precision.
 
 ## Usage
 
-Explain how users can trigger the CI/CD pipeline manually and what automated triggers are set up (e.g., on push, on pull request).
+As of now, to trigger the pipeline manually, click on the `Actions` tab in your
+GitHub repository and select the `ImpEx` workflow.
 
-Example:
+1. **Exporting Spark Services**:
+   - Manually trigger the export workflow by clicking on the `Run workflow` button in the Actions tab.
+   - Once triggered, the workflow will perform the export operation in the UAT environment.
 
-- To trigger the pipeline manually, click on the `Actions` tab in your GitHub repository and select the workflow you want to run.
-
-## Customizing the Workflow
-
-Provide guidance on how users can customize the CI/CD pipeline to fit their specific needs. Include information on environment variables, configuration files, and any other customization options.
-
-Example:
-
-- To customize the deployment environment, modify the `ENVIRONMENT` variable in the workflow file.
+2. **Importing Spark Services**:
+   - After the export job is successful, the import workflow will automatically run in the SIT environment.
+   - This workflow will first download the exported entities and then perform the import operation.
 
 ## Contributing
 
-Explain how others can contribute to this project, including guidelines for pull requests, issues, and code style.
-
-Example:
-
-- We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
+If you'd like to contribute to this project, please follow the
+[Contributing Guidelines](CONTRIBUTING.md).
 
 ## License
 
 This project is licensed under the [MIT](LICENSE).
 
+<!-- References -->
 [ci-img]: https://github.com/CoherentCapital/gha-ci-cd/workflows/build/badge.svg
 [ci-url]: https://github.com/oherentCapital/gha-ci-cd/actions/workflows/actions-demo.yml
+[gha-envars]: https://docs.github.com/en/actions/learn-github-actions/variables
+[impex-apis]: https://docs.coherent.global/api-details/impex-apis
