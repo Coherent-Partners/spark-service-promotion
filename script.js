@@ -51,7 +51,7 @@ async function exp(env, tenant, token, services) {
  * 2. Check status
  *
  * ```bash
- * node -e 'require("./script.js").imp("uat","tenant","<some-token>","[\"folder/service1\",\"folder/service2\"]")'
+ * node -e 'require("./script.js").imp("uat","tenant","<some-token>","[\"folder/service1\",\"folder/service2\"]", "folder/service")'
  * ```
  */
 async function imp(env, tenant, token, source, target = '') {
@@ -93,10 +93,11 @@ async function executeApiService({ endpoint, body, headers }) {
 
 async function checkStatus({ endpoint, token }) {
   const maxRetries = 10;
+  const headers = { headers: { Authorization: token, 'Content-Type': 'application/json' } };
+
   try {
     let retries = 0;
     while (retries < maxRetries) {
-      const headers = { headers: { Authorization: token, 'Content-Type': 'application/json' } };
       const response = await axios.get(endpoint, headers);
 
       if (response.data['status'] === 'completed' || response.data['status'] === 'closed') {
@@ -109,7 +110,7 @@ async function checkStatus({ endpoint, token }) {
     }
     return [];
   } catch (error) {
-    ScriptError.handle(error, 'failed to check Export status');
+    ScriptError.handle(error, 'failed to check status');
   }
 }
 
@@ -187,7 +188,7 @@ function sanitizeServices(services) {
 function validateArgs(env, tenant, token, services) {
   if (isEmpty(env)) throw new ScriptError('<env> is required', 'ARGUMENT_MISSING', env);
   if (isEmpty(tenant)) throw new ScriptError('<tenant> is required', 'ARGUMENT_MISSING', tenant);
-  if (isEmpty(token)) throw new ScriptError('<env> is required', 'ARGUMENT_MISSING', token);
+  if (isEmpty(token)) throw new ScriptError('<token> is required', 'ARGUMENT_MISSING', token);
   if (sanitizeServices(services).length === 0)
     throw new ScriptError('<services> is required', 'ARGUMENT_MISSING', services);
 }
@@ -197,10 +198,10 @@ function isEmpty(text) {
 }
 
 class ScriptError extends Error {
-  constructor(message, type = 'UNKNOWN_ERROR', source) {
+  constructor(message, type = 'UNKNOWN_ERROR', cause) {
     super('😩 ' + message);
     this.type = type;
-    this.source = source;
+    this.cause = cause;
     this.name = 'ScriptError';
   }
 
@@ -211,19 +212,20 @@ class ScriptError extends Error {
     throw new ScriptError(message, 'SERVICE_UNAVAILABLE', error);
   }
 
-  static friendlyMessage(error) {
-    if (error instanceof ScriptError) {
+  static friendlyMessage(error, debug = false) {
+    if (error instanceof ScriptError || error.name === 'ScriptError') {
       console.log(error.toString());
+      if (debug) console.log(error.toJson());
     } else {
       console.log('>>> 😩 ', error);
     }
   }
 
-  get sourceAsString() {
-    if (!this.source) return '<undefined>';
-    if (typeof this.source === 'string') return this.source;
-    if (this.source instanceof Error) return this.source.message;
-    if (typeof this.source === 'object') return '<object>';
+  get causeAsString() {
+    if (!this.cause) return '<undefined>';
+    if (typeof this.cause === 'string') return this.cause;
+    if (this.cause instanceof Error) return this.cause.message;
+    if (typeof this.cause === 'object') return '<object>';
     return '<unknown>';
   }
 
@@ -232,7 +234,7 @@ class ScriptError extends Error {
   }
 
   toString() {
-    let report = `>>> ${this.name} - ${this.type} (${this.sourceAsString})`;
+    let report = `>>> ${this.name} - ${this.type} (${this.causeAsString})`;
     if (this.hasMessage) report = `${report}: ${this.message}`;
     return report;
   }
@@ -241,7 +243,7 @@ class ScriptError extends Error {
     return {
       code: this.type,
       message: this.message,
-      origin: this.source,
+      origin: this.cause,
       details: this.toString(),
     };
   }

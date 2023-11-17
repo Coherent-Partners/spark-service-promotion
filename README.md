@@ -78,14 +78,14 @@ maintaining consistency across development stages.
 
 The process starts with an export operation in the SIT environment, where the
 latest configurations and services are packaged into a portable artifact. This
-artifact is then securely stored for later use. Subsequently, in the UAT environment,
-the import workflow retrieves the exported entities, deploys them, and ensures
+artifact is then securely stored for later use. Subsequently, the import workflow
+retrieves the exported entities, deploys them in the UAT environment, and ensures
 the seamless transition of services from the lower environment to the higher one.
 
 ### Test Workflow
 
 If you're new to GitHub Actions, you can test the workflow by running the
-`Into to GitHub Actions` workflow. This workflow is designed to help you get
+`Intro to GitHub Actions` workflow. This workflow is designed to help you get
 familiar with GitHub Actions and its associated features.
 
 Visit [GitHub Actions](https://docs.github.com/en/actions/quickstart) to learn
@@ -133,7 +133,7 @@ in your GitHub repository for both export and import jobs.
 Feel free to customize the workflow, environment settings, or any other parameters
 in the workflow file (`.github/workflows/main.yml`) to suit your specific requirements.
 
-Additionally, you can also customize the Node.js script (`src/index.js`) to add
+Additionally, you can also customize the Node.js script (`src/script.js`) to add
 more functionality or modify the existing one. Keep in mind that the script relies
 entirely on the [ImpEx APIs][impex-apis] to perform the import and export operations.
 
@@ -144,15 +144,15 @@ entirely on the [ImpEx APIs][impex-apis] to perform the import and export operat
 
 ## Usage
 
-As of now, to trigger the pipeline manually, click on the `Actions` tab in your
-GitHub repository and select the `ImpEx` workflow.
+As of now, you can only trigger the pipeline manually. To do so, click on the
+`Actions` tab in your GitHub repository and select the `ImpEx` workflow.
 
 1. **Exporting Spark Services**:
    - Manually trigger the export workflow by clicking on the `Run workflow` button in the Actions tab.
-   - Once triggered, the workflow will perform the export operation in the UAT environment.
+   - Once triggered, the workflow will perform the export operation in the SIT environment.
 
 2. **Importing Spark Services**:
-   - After the export job is successful, the import workflow will automatically run in the SIT environment.
+   - After the export job is successful, the import workflow will automatically run in the UAT environment.
    - This workflow will first download the exported entities and then perform the import operation.
 
 ## Contributing
@@ -162,7 +162,7 @@ If you'd like to contribute to this project, please follow the
 
 ## License
 
-This project is licensed under the [MIT](LICENSE).
+This project is licensed under [MIT](LICENSE).
 
 <!-- References -->
 [ci-img]: https://github.com/CoherentCapital/gha-ci-cd/workflows/impex/badge.svg
