@@ -25,13 +25,13 @@ and import Spark services from a lower to higher environment.
 Welcome to the CI/CD for Exporting and Importing Spark Services repository!
 
 This project leverages GitHub Actions to automate the process of exporting and
-importing Spark services, facilitating seamless deployment from lower to higher
+importing Spark services, facilitating a seamless deployment from lower to higher
 environments.
 
 With a meticulously designed workflow, a CI/CD script may help ensure efficiency
 and consistency in managing your Spark services. If you're looking to streamline
-enhance deployment workflows, this repository offers a basic foundation to accelerate
-this process.
+and enhance deployment workflows, this repository offers a basic foundation to
+accelerate this process.
 
 Explore the comprehensive documentation below to get started on integrating this
 sample CI/CD solution into your own environment.
@@ -43,7 +43,7 @@ following prerequisites in place:
 
 - **GitHub Repository**: You should have a GitHub repository set up for your
   project where you'll be implementing the CI/CD workflow.
-- **Access to Environments**: You should have access credentials and permissions
+- **Access to Environments**: You should have access to credentials and permissions
   for the lower environment (e.g., UAT) and higher environment (e.g., PROD) where
   you intend to perform the import and export of Spark services.
 - **Environment Variables**: Set up the necessary environment variables in your

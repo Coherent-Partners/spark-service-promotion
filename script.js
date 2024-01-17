@@ -4,6 +4,7 @@ const FormData = require('form-data');
 
 const CICD_HANDLER = 'GitHub Actions';
 const FILE_PATH = 'package.zip';
+const MAX_RETRIES = 10;
 
 /**
  * 1. Execute Export API
@@ -39,7 +40,6 @@ async function exp(env, tenant, token, services) {
 
       await downloadFile(fileUrl);
     }
-    process.exit(0);
   } catch (error) {
     ScriptError.friendlyMessage(error);
     process.exit(1);
@@ -72,7 +72,7 @@ async function imp(env, tenant, token, source, target = '') {
     const outputs = await checkStatus({ endpoint: statusUrl, token });
     if (outputs && outputs.services.length === 0)
       throw new ScriptError('failed to obtain <$.outputs.services>', 'UNPROCESSABLE');
-    console.log(`✅ ${outputs.services.length} services imported`);
+    console.log(`✅ ${outputs.services.length} service(s) imported`);
 
     process.exit(0);
   } catch (error) {
@@ -92,12 +92,11 @@ async function executeApiService({ endpoint, body, headers }) {
 }
 
 async function checkStatus({ endpoint, token }) {
-  const maxRetries = 10;
   const headers = { headers: { Authorization: token, 'Content-Type': 'application/json' } };
 
   try {
     let retries = 0;
-    while (retries < maxRetries) {
+    while (retries < MAX_RETRIES) {
       const response = await axios.get(endpoint, headers);
 
       if (response.data['status'] === 'completed' || response.data['status'] === 'closed') {
@@ -105,7 +104,7 @@ async function checkStatus({ endpoint, token }) {
       }
       retries++;
 
-      console.log(`waiting for Export to complete (attempt ${retries} of ${maxRetries})`);
+      console.log(`waiting for Export to complete (attempt ${retries} of ${MAX_RETRIES})`);
       await new Promise((resolve) => setTimeout(resolve, retries * 1000)); // wait n seconds
     }
     return [];
@@ -217,7 +216,7 @@ class ScriptError extends Error {
       console.log(error.toString());
       if (debug) console.log(error.toJson());
     } else {
-      console.log('>>> 😩 ', error);
+      console.log('>>> 😩', error);
     }
   }
 
