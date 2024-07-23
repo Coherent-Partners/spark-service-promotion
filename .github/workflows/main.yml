@@ -1,5 +1,5 @@
-name: ImpEx
-run-name: Promotion of Spark services
+name: Promotion of Spark services
+run-name: Promoting of Spark services from SIT to UAT
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
 
       - name: Export Spark services
         run: |
-          node -e 'require("./script.js").exp("${{ vars.SPARK_SETTINGS }}","${{ vars.BEARER_TOKEN }}")'
+          node -e 'require("./script.js").exp("${{ vars.SPARK_SETTINGS }}","${{ secrets.BEARER_TOKEN }}")'
           [ -f package.zip ] && du -sh package.zip
 
       - name: Persist exported entities as artifact
@@ -57,5 +57,5 @@ jobs:
           name: exported
       - name: Import Spark services
         run: |
-          node -e 'require("./script.js").imp("${{ vars.SPARK_SETTINGS }}","${{ vars.OAUTH_CREDS }}")'
+          node -e 'require("./script.js").imp("${{ vars.SPARK_SETTINGS }}","${{ secrets.OAUTH_CREDS }}")'
           rm -f package.zip
