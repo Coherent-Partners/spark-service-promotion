@@ -1,8 +1,7 @@
 {
   "name": "spark-service-promotion",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Promotion of Spark services from one tenant to another",
-  "main": "script.js",
   "dependencies": {
     "@cspark/sdk": "0.2.3"
   }
