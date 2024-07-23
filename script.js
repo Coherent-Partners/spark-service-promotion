@@ -41,7 +41,7 @@ async function imp(settings, auth) {
     const spark = new Spark({ ...options, oauth: JSON.parse(auth) });
     const exported = fs.createReadStream(FILE_PATH);
 
-    const response = await spark.impex.import({ file: exported, destination: services });
+    const response = await spark.impex.import({ file: exported, destination: services, ifPresent: 'add_version' });
     const { outputs } = response.data;
     if (outputs && outputs.services.length === 0) throw 'no services imported';
 
