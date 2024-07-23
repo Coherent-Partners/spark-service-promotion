@@ -1,11 +1,13 @@
 const impex = require('./script.js');
 
-const TENANT = 'fieldengineering';
-const BEARER_TOKEN_SOURCE = `Bearer token here`;
-const BEARER_TOKEN_TARGET = `Bearer token here`;
-const SERVICES = 'gh_ci_cd/eclm';
+const SIT_SPARK_SETTINGS =
+  '{"env": "sit","tenant": "coherent","timeout": 90000,"maxRetries": 20,"retryInterval": 3,"services": ["promotions/CyberRater"]}';
+const UAT_SPARK_SETTINGS =
+  '{"env":"uat.us","tenant":"fieldengineering","timeout":90000,"maxRetries":40,"retryInterval":3,"services":{"source":"promotions/CyberRater","target":"my-folder-1/CyberRater"}}';
+const SIT_BEARER_TOKEN = 'sit bearer token';
+const UAT_BEARER_TOKEN = 'uat bearer token';
 
 (async () => {
-  await impex.exp('sit', TENANT, BEARER_TOKEN_SOURCE, SERVICES);
-  await impex.imp('uat.us', TENANT, BEARER_TOKEN_TARGET, SERVICES);
+  await impex.exp(SIT_SPARK_SETTINGS, SIT_BEARER_TOKEN);
+  await impex.imp(UAT_SPARK_SETTINGS, UAT_BEARER_TOKEN);
 })();
