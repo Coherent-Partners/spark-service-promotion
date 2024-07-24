@@ -1,5 +1,5 @@
-name: ImpEx
-run-name: CI/CD Demo
+name: Promotion
+run-name: Promoting Spark services from SIT to UAT
 
 on:
   workflow_dispatch:
@@ -17,18 +17,17 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'npm'
 
       - name: Install Node Dependencies
         run: npm ci
 
-      - name: Execute Export API Request
+      - name: Export Spark services
         run: |
-          node -e 'require("./script.js").exp("${{ vars.CS_URL_REGION }}","${{ vars.CS_TENANT_NAME }}","${{ vars.CS_BEARER_TOKEN }}","${{ vars.CS_SERVICE_URI_SOURCE }}")'
+          node -e 'require("./scripts/impex").exp("${{ vars.SPARK_SETTINGS }}","${{ secrets.BEARER_TOKEN }}")'
           [ -f package.zip ] && du -sh package.zip
 
       - name: Persist exported entities as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: exported
           path: package.zip
@@ -46,16 +45,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'npm'
 
       - name: Install Node Dependencies
         run: npm ci
 
       - name: Download exported entities from artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: exported
-      - name: Execute Import API Request
+      - name: Import Spark services
         run: |
-          node -e 'require("./script.js").imp("${{ vars.CS_URL_REGION }}","${{ vars.CS_TENANT_NAME }}","${{ vars.CS_BEARER_TOKEN }}","${{ vars.CS_SERVICE_URI_SOURCE }}", "${{ vars.CS_SERVICE_URI_TARGET }}")'
+          node -e 'require("./scripts/impex").imp("${{ vars.SPARK_SETTINGS }}","${{ secrets.OAUTH_CREDS }}")'
           rm -f package.zip
