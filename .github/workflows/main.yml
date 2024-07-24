@@ -55,5 +55,5 @@ jobs:
           name: exported
       - name: Import Spark services
         run: |
-          node -e 'require("./scripts/impex").imp("${{ vars.SPARK_SETTINGS }}","${{ secrets.BEARER_TOKEN }}")'
+          node -e 'require("./scripts/impex").imp("${{ vars.SPARK_SETTINGS }}","${{ secrets.OAUTH_CREDS }}")'
           rm -f package.zip

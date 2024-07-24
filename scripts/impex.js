@@ -8,7 +8,7 @@ const FILE_PATH = 'package.zip';
  * Export Spark services.
  *
  * ```bash
- * node -e 'require("./script").exp("<settings>", "<bearer-token>")'
+ * node -e 'require("./scripts/impex").exp("<settings>", "<bearer-token>")'
  * ```
  */
 async function exp(settings, auth) {
@@ -32,15 +32,16 @@ async function exp(settings, auth) {
  * Import Spark services.
  *
  * ```bash
- * node -e 'require("./script.js").imp("<settings>", "<bearer-token>")'
+ * node -e 'require("./scripts/impex").imp("<settings>", "<oauth-creds>")'
  * ```
  */
 async function imp(settings, auth) {
   try {
     const { services: destination, ...options } = JSON.parse(settings);
-    const spark = new Spark({ ...options, token: auth });
-    const file = fs.createReadStream(FILE_PATH);
+    const spark = new Spark({ ...options, oauth: JSON.parse(auth) });
+    await spark.config.auth.oauth?.retrieveToken(spark.config);
 
+    const file = fs.createReadStream(FILE_PATH);
     const response = await spark.impex.import({ file, destination, ifPresent: 'add_version' });
     const { outputs } = response.data;
     if (!outputs || outputs.services.length === 0) throw 'no services imported';
