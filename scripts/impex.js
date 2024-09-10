@@ -1,8 +1,9 @@
 const fs = require('fs');
-const { SparkClient: Spark } = require('@cspark/sdk');
+const { SparkClient: Spark, Logger } = require('@cspark/sdk');
 
 const CICD_HANDLER = 'GitHub Actions';
 const FILE_PATH = 'package.zip';
+const logger = Logger.of({ logLevels: 'verbose' });
 
 /**
  * Export Spark services.
@@ -21,9 +22,9 @@ async function exp(settings, auth) {
     const file = fs.createWriteStream(FILE_PATH);
     downloadables[0].buffer.pipe(file);
 
-    console.log(`✅ ${downloadables.length} service(s) exported`);
+    logger.verbose(`✅ ${downloadables.length} service(s) exported`);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     process.exit(1);
   }
 }
@@ -46,10 +47,10 @@ async function imp(settings, auth) {
     const { outputs } = response.data;
     if (!outputs || outputs.services.length === 0) throw 'no services imported';
 
-    console.log(`✅ ${outputs.services.length} service(s) imported`);
+    logger.verbose(`✅ ${outputs.services.length} service(s) imported`);
     process.exit(0);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     process.exit(1);
   }
 }
