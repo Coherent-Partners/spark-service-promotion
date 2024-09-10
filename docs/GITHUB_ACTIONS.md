@@ -13,9 +13,9 @@ To get started, make sure to set up the following:
   a valid authorization scheme for the export and import jobs.
 
 You may want to store these values as environment variables. For more information
-on how to set up environment variables, visit [GitHub Actions Environment Variables][gha-env-vars].
+on how to set environment variables, visit [GitHub Actions Environment Variables][gha-env-vars].
 
-The `SPARK_SETTINGS` and `BEARER_TOKEN` environment variables were chosen as a
+The `SPARK_SETTINGS`, `BEARER_TOKEN` and `OAUTH_CREDS` environment variables were chosen as a
 dynamic way to provide these details to the workflow. You are welcome to choose a
 different approach as you see fit.
 
@@ -25,10 +25,9 @@ different approach as you see fit.
 
 If you're new to GitHub Actions, you can test the workflow concept by running the
 `Intro to GitHub Actions` workflow, which is designed to help you get started with
-GitHub Actions and its associated features.
+[GitHub Actions][gha-quickstart] and its associated features.
 
-Visit [GitHub Actions](https://docs.github.com/en/actions/quickstart) to learn
-more about it.
+Visit [GitHub Actions][gha-intro] to learn more about it.
 
 ### Promotion Workflow
 
@@ -48,7 +47,7 @@ The workflow consists of 2 codependent jobs: `export` and `import`.
 ### Configuration
 
 To demonstrate the promotion workflow in this example, we use 2 repo environments:
-SIT (source) and UAT (target) with their respective Spark settings and bearer tokens.
+SIT (source) and UAT (target) with their respective Spark settings and authorization schemes.
 
 - The `SPARK_SETTINGS` is a stringified object compliant with the SDK client configuration.
   For example, the settings for the source tenant (SIT) can be defined as follows:
@@ -73,7 +72,7 @@ schemes like API keys or OAuth2 client credentials can be used as well.
 > and npm (Node Package Manager) are installed on your machine.
 > Run `npm install` to install the required dependencies and `node scripts/test.js`
 > to execute the test script. Remember to update the environment variables to match
-> your Spark settings and bearer token.
+> your Spark settings and user credentials.
 
 ### Customization
 
@@ -87,6 +86,10 @@ entirely on the [ImpEx APIs][impex-apis] to perform the import and export operat
 To manually trigger the pipeline, click on the `Actions` tab in your GitHub repository
 and select the `Promotion` workflow.
 
+<!-- References -->
+
+[gha-intro]: https://docs.github.com/en/actions/about-github-actions/understanding-github-actions
+[gha-quickstart]: https://docs.github.com/en/actions/quickstart
 [gha-env-vars]: https://docs.github.com/en/actions/learn-github-actions/variables
 [impex-apis]: https://docs.coherent.global/api-details/impex-apis
 [export-api]: https://docs.coherent.global/spark-apis/impex-apis/export
