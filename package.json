@@ -3,6 +3,6 @@
   "version": "0.1.0",
   "description": "Promotion of Spark services from one tenant to another",
   "dependencies": {
-    "@cspark/sdk": "0.2.3"
+    "@cspark/sdk": "0.4.2"
   }
 }

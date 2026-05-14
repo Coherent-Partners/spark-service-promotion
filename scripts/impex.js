@@ -3,7 +3,7 @@ const { SparkClient: Spark, Logger } = require('@cspark/sdk');
 
 const CICD_HANDLER = 'GitHub Actions';
 const FILE_PATH = 'package.zip';
-const logger = Logger.of({ logLevels: 'verbose' });
+const logger = Logger.of({ logLevels: ['verbose'] });
 
 /**
  * Export Spark services.
